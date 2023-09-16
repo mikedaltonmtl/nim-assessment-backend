@@ -82,7 +82,7 @@ const getByStatus = async (status) => {
   return orders;
 };
 
-const totalSales = async (startDate, endDate) => {
+const totalSales = async () => {
   const orders = await Order.find().populate("items.item");
   const items = orders.map(order => order.items);
   const sum = items.flat().reduce((total, element) =>
@@ -101,6 +101,20 @@ const totalSales = async (startDate, endDate) => {
   // return orders;
 };
 
+const getByStatusQuery = async (status) => {
+  const orders = await Order.find
+    ({ status: { $regex: status, $options: "i" } })
+    .populate("items.item");
+  return orders;
+};
+
+const getByStatusAndDate = async (status) => {
+  const orders = await Order.find
+    ({ status: { $regex: status, $options: "i" } })
+    .populate("items.item");
+  return orders;
+};
+
 module.exports = {
   getAll,
   getOne,
@@ -109,5 +123,7 @@ module.exports = {
   remove,
   getByStatus,
   totalSales,
+  getByStatusQuery,
+  getByStatusAndDate,
   Order
 };

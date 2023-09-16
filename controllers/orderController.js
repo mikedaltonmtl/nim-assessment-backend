@@ -76,6 +76,15 @@ const totalSales = async (req, res) => {
   }
 };
 
+const getByStatusQuery = async (req, res) => {
+  try {
+    const menu = await Order.getByStatusQuery(req.query.s);
+    res.send(menu);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
 module.exports = {
   getAll,
   getOne,
@@ -84,5 +93,6 @@ module.exports = {
   remove,
   getByCustomer,
   getByStatus,
-  totalSales
+  totalSales,
+  getByStatusQuery
 };
