@@ -82,6 +82,25 @@ const getByStatus = async (status) => {
   return orders;
 };
 
+const totalSales = async (startDate, endDate) => {
+  const orders = await Order.find().populate("items.item");
+  const items = orders.map(order => order.items);
+  const sum = items.flat().reduce((total, element) =>
+    total + element.item.price * element.quantity
+  , 0);
+  return { total: sum };
+
+  // console.log("startDate", startDate, "endDate", endDate);
+  // const orders = await Order.find({
+  //   createdAt: {
+  //     $gte: new Date(new Date(startDate).setHours(0o0, 0o0, 0o0)),
+  //     $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+  //   }}
+  // ).
+  // populate("items.item");
+  // return orders;
+};
+
 module.exports = {
   getAll,
   getOne,
@@ -89,5 +108,6 @@ module.exports = {
   update,
   remove,
   getByStatus,
+  totalSales,
   Order
 };
