@@ -82,6 +82,53 @@ const getByStatus = async (status) => {
   return orders;
 };
 
+const totalSales = async () => {
+  const orders = await Order.find().populate("items.item");
+  const items = orders.map((order) => order.items);
+  const sum = items
+    .flat()
+    .reduce(
+      (total, element) => total + element.item.price * element.quantity,
+      0
+    );
+  return { total: sum };
+};
+
+const totalSalesByDate = async (from, to) => {
+  const orders = await Order.find({
+    createdAt: {
+      $gte: new Date(new Date(from).setHours(0o0, 0o0, 0o0)),
+      $lt: new Date(new Date(to).setHours(23, 59, 59))
+    }
+  }).populate("items.item");
+  const items = orders.map((order) => order.items);
+  const sum = items
+    .flat()
+    .reduce(
+      (total, element) => total + element.item.price * element.quantity,
+      0
+    );
+  return { total: sum };
+};
+
+const getByStatusQuery = async (status) => {
+  const orders = await Order.find({
+    status: { $regex: status, $options: "i" }
+  }).populate("items.item");
+  return orders;
+};
+
+const getByStatusAndDate = async (status, from, to) => {
+  const orders = await Order.find({
+    status: { $regex: status, $options: "i" },
+    createdAt: {
+      $gte: new Date(new Date(from).setHours(0o0, 0o0, 0o0)),
+      $lt: new Date(new Date(to).setHours(23, 59, 59))
+    }
+  }).populate("items.item");
+  return orders;
+};
+
 module.exports = {
   getAll,
   getOne,
@@ -89,5 +136,9 @@ module.exports = {
   update,
   remove,
   getByStatus,
+  totalSales,
+  totalSalesByDate,
+  getByStatusQuery,
+  getByStatusAndDate,
   Order
 };
