@@ -78,7 +78,14 @@ const totalSales = async (req, res) => {
 
 const getByStatusQuery = async (req, res) => {
   try {
-    const menu = await Order.getByStatusQuery(req.query.s);
+    const menu =
+      req.query.s && req.query.from && req.query.to
+        ? await Order.getByStatusAndDate(
+            req.query.s,
+            req.query.from,
+            req.query.to
+          )
+        : await Order.getByStatusQuery(req.query.s);
     res.send(menu);
   } catch (error) {
     res.status(500).send(error);

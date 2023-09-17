@@ -84,10 +84,13 @@ const getByStatus = async (status) => {
 
 const totalSales = async () => {
   const orders = await Order.find().populate("items.item");
-  const items = orders.map(order => order.items);
-  const sum = items.flat().reduce((total, element) =>
-    total + element.item.price * element.quantity
-  , 0);
+  const items = orders.map((order) => order.items);
+  const sum = items
+    .flat()
+    .reduce(
+      (total, element) => total + element.item.price * element.quantity,
+      0
+    );
   return { total: sum };
 
   // console.log("startDate", startDate, "endDate", endDate);
@@ -102,16 +105,20 @@ const totalSales = async () => {
 };
 
 const getByStatusQuery = async (status) => {
-  const orders = await Order.find
-    ({ status: { $regex: status, $options: "i" } })
-    .populate("items.item");
+  const orders = await Order.find({
+    status: { $regex: status, $options: "i" }
+  }).populate("items.item");
   return orders;
 };
 
-const getByStatusAndDate = async (status) => {
-  const orders = await Order.find
-    ({ status: { $regex: status, $options: "i" } })
-    .populate("items.item");
+const getByStatusAndDate = async (status, from, to) => {
+  const orders = await Order.find({
+    status: { $regex: status, $options: "i" },
+    createdAt: {
+      $gte: new Date(new Date(from).setHours(0o0, 0o0, 0o0)),
+      $lt: new Date(new Date(to).setHours(23, 59, 59))
+    }
+  }).populate("items.item");
   return orders;
 };
 
